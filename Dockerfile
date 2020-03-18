@@ -16,7 +16,7 @@ ENV UMASK=000
 ENV UID=99
 ENV GID=100
 ENV DATA_PERM=770
-ENV USER="stun-turn"
+ENV USER="stunturn"
 
 RUN mkdir $DATA_DIR && \
 	mkdir $SERVER_DIR && \
