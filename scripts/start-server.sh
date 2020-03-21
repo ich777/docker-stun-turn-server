@@ -26,7 +26,7 @@ fi
 echo "---Checking if certificate is in place---"
 if [ ! -f ${DATA_DIR}/${CERT_FILE} ]; then
 	echo "---No certificate found, creating---"
-	openssl req -newkey rsa:${CERT_LENGTH} -new -nodes -x509 -days ${CERT_VALID_DAYS} -subj "/C=${CA_COUNTRY}/ST=${CA_STATE_PROV}/L=${CA_LOCALITY}/O=${CA_ORGANIZATION}/CN=${REALM}" -keyout ${DATA_DIR}/key.pem -out ${DATA_DIR}/cert.pem
+	openssl req -newkey rsa:${CERT_LENGTH} -new -nodes -x509 -days ${CERT_VALID_DAYS} -subj "/C=${CA_COUNTRY}/ST=${CA_STATE_PROV}/L=${CA_LOCALITY}/O=${CA_ORGANIZATION}/CN=${REALM}" -keyout ${DATA_DIR}/${PRIVKEY_FILE} -out ${DATA_DIR}/${CERT_FILE}
 else
 	echo "---Certificate found, continuing---"
 fi
@@ -34,7 +34,7 @@ fi
 echo "---Checking if private key is in place---"
 if [ ! -f ${DATA_DIR}/${PRIVKEY_FILE} ]; then
 	echo "---No private key found, creating---"
-	openssl req -newkey rsa:${CERT_LENGTH} -new -nodes -x509 -days ${CERT_VALID_DAYS} -subj "/C=${CA_COUNTRY}/ST=${CA_STATE_PROV}/L=${CA_LOCALITY}/O=${CA_ORGANIZATION}/CN=${REALM}" -keyout ${DATA_DIR}/key.pem -out ${DATA_DIR}/cert.pem
+	openssl req -newkey rsa:${CERT_LENGTH} -new -nodes -x509 -days ${CERT_VALID_DAYS} -subj "/C=${CA_COUNTRY}/ST=${CA_STATE_PROV}/L=${CA_LOCALITY}/O=${CA_ORGANIZATION}/CN=${REALM}" -keyout ${DATA_DIR}/${PRIVKEY_FILE} -out ${DATA_DIR}/${CERT_FILE}
 else
 	echo "---Private key found, continuing---"
 fi
