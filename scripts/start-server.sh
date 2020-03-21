@@ -51,8 +51,12 @@ echo "---Preparing server---"
 chmod -R ${DATA_PERM} ${DATA_DIR}
 
 if [ "${DISPLAY_SECRETS}" == "true" ]; then
+	echo "----------------------------------------------------------------------------------------"
+	echo
 	echo "AUTH-Secret: ${SECRET}"
 	echo "CLI-Password: ${CLI_PASSWORD}"
+	echo
+	echo "----------------------------------------------------------------------------------------"
     sleep 10
 fi
 
