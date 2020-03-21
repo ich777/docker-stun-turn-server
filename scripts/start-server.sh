@@ -57,10 +57,14 @@ if [ "${DISPLAY_SECRETS}" == "true" ]; then
 	echo "CLI-Password: ${CLI_PASSWORD}"
 	echo
 	echo "----------------------------------------------------------------------------------------"
-    sleep 10
 fi
 
 echo "---Starting Server---"
+echo
+echo "-------------------------------------------------------------------------------------------------"
+echo "---Please ignore the following socket errors if you don't have configured IPv6 on your server!---"
+echo "-------------------------------------------------------------------------------------------------"
+echo
 turnserver --tls-listening-port ${PORT} \
 	--fingerprint \
 	--use-auth-secret \
