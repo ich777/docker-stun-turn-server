@@ -6,7 +6,7 @@ RUN apt-get update && \
 	apt-get -y install --no-install-recommends coturn openssl && \
 	rm -rf /var/lib/apt/lists/*
 
-ENV DATA_DIR="/serverdata"
+ENV DATA_DIR="/stun-turn"
 ENV PORT=5349
 ENV SECRET=""
 ENV SRV_URL=""
