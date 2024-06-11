@@ -1,20 +1,4 @@
 #!/bin/bash
-echo "---Checking if secret is specified---"
-if [ "${SECRET}" == "" ]; then
-	echo "---No secret specified searching for existing...---"
-	if [ ! -f ${DATA_DIR}/secret.txt ]; then
-		echo "---No secret found, creating---"
-		touch ${DATA_DIR}/secret.txt
-		openssl rand -hex 32 >> ${DATA_DIR}/secret.txt
-		SECRET="$(head ${DATA_DIR}/secret.txt)"
-	else
-		echo "---Secret found!---"
-		SECRET="$(head ${DATA_DIR}/secret.txt)"
-	fi
-else
-	echo "---Secret manually specified, continuing---"
-fi
-
 echo "---Checking if CLI password is specified---"
 if [ -z "${CLI_PASSWORD}" ]; then
 	echo "---No CLI password found, creating---"
@@ -47,6 +31,42 @@ else
 	echo "---Diffie–Hellman key file found, continuing---"
 fi
 
+echo "---Checking if external IP is specified---"
+if [ ! -z "${EXTERNAL_IP}" ]; then
+	echo "---Setting external IP to: ${EXTERNAL_IP}---"
+	EXTERNAL_IP="--external-ip ${EXTERNAL_IP}"
+else
+	echo "---No external IP set---"
+fi
+
+echo "---Checking if Static AUTH is set---"
+if [ "${STATIC_AUTH}" != "true" ]; then
+	echo "---Database AUTH instead of Static AUTH enabled---"
+	echo "---Please don't forget to set your users in the---"
+	echo "---database: /stun-turn/database.sql -------------"
+	AUTHENTICATION="--lt-cred-mech \
+	--userdb ${DATA_DIR}/database.sql"
+else
+	echo "---Static AUTH is set!---"
+	echo "---Checking if secret is specified---"
+	if [ -z "${SECRET}" ]; then
+		echo "---No secret specified searching for existing...---"
+		if [ ! -f ${DATA_DIR}/secret.txt ]; then
+			echo "---No secret found, creating---"
+			touch ${DATA_DIR}/secret.txt
+			openssl rand -hex 32 >> ${DATA_DIR}/secret.txt
+			SECRET="$(head ${DATA_DIR}/secret.txt)"
+		else
+			echo "---Secret found!---"
+			SECRET="$(head ${DATA_DIR}/secret.txt)"
+		fi	
+	else	
+		echo "---Secret manually specified, continuing---"
+	fi
+	AUTHENTICATION="	--use-auth-secret \
+	--static-auth-secret ${SECRET}"
+fi
+
 echo "---Preparing server---"
 chmod -R ${DATA_PERM} ${DATA_DIR}
 
@@ -67,8 +87,7 @@ echo "--------------------------------------------------------------------------
 echo
 turnserver --tls-listening-port ${PORT} \
 	--fingerprint \
-	--use-auth-secret \
-	--static-auth-secret ${SECRET} \
+	${AUTHENTICATION} \
 	--realm ${REALM} \
 	--total-quota ${TOTAL_QUOTA} \
 	--max-bps ${MAX_BPS} \
@@ -80,7 +99,7 @@ turnserver --tls-listening-port ${PORT} \
 	--dh-file ${DATA_DIR}/${DH_FILE} \
 	--no-tlsv1 \
 	--no-tlsv1_1 \
-	--userdb ${DATA_DIR}/database.sql \
 	--listening-ip ${LISTENING_IP} \
 	--cli-password=${CLI_PASSWORD} \
+	${EXTERNAL_IP} \
 	${EXTRA_PARAMS}
